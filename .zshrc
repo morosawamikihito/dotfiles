@@ -309,3 +309,41 @@ alias rrp='remove-right-prompts'
 
 
 
+
+########### g++ ###########
+
+function gcc-compile {
+  TARGET_FILE_PATH=`find . -name *.cpp | fzf`
+  TARGET_FILENAME=`basename ${TARGET_FILE_PATH} | sed "s/\.[^\.]*$//"`
+  OUTPUT_DIR=`ls -F | grep / | fzf`
+  gcc -std=c++14 ${TARGET_FILE_PATH} -lc++ -o ${OUTPUT_DIR}${TARGET_FILENAME}.out
+  zle redisplay
+}
+
+function exec-compiled-binary {
+  BUFFER=`find . -name *.out | fzf`
+  CURSOR=$#BUFFER
+  zle clear-screen
+}
+
+#alias gg='ls | grep cpp | fzf | sed "s/\.[^\.]*$//" | xargs -I{} gcc -std=c++14 {}.cpp -lc++ -o {}'
+
+zle -N gcc-compile
+bindkey 'ç' gcc-compile
+
+zle -N exec-compiled-binary
+bindkey '≈' exec-compiled-binary
+
+
+
+
+
+
+
+
+
+
+
+
+
+

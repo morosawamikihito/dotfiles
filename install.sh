@@ -27,7 +27,7 @@ declare -a files=(
   ".vimrc"
 )
 
-function makeLink {
+function make_link {
   for file in ${files[@]}; do
     if [ -f ${HOME}/${file} ]; then
       echo ${file} is already exists file
@@ -41,16 +41,34 @@ function makeLink {
   done
 }
 
-function removeLink {
+function remove_link {
   for file in ${files[@]}; do
     if [ -L ${HOME}/${file} ]; then unlink ${HOME}/${file}; fi
   done
 }
 
+function install_third_party {
+  # requires
+  #/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+  #brew install wget
+  #brew install git
+  # Todo: install requires software and refactor 
+
+  # NeoBundle
+  # mkdir -p ~/.vim/bundle
+  # git clone git://github.com/Shougo/neobundle.vim ~/.vim/bundle/neobundle.vim
+
+  # dein
+}
+
+
 case $1 in
   force)
-    removeLink
-    makeLink
+    remove_link
+    make_link
     ;;
-  *) makeLink ;;
+  3rd) install_third_party ;;
+  *) make_link ;;
 esac
+
+

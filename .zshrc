@@ -1,5 +1,4 @@
 ########### my default setting ###########
-
 export PATH=${PATH}:/usr/local/bin
 export PATH=${PATH}:${HOME}/go/bin
 
@@ -21,8 +20,13 @@ alias shfmt='shfmt -i 2 -ci -s'
 . ${HOME}/.individual.zsh
 . ${HOME}/.organization.zsh
 
+
+
 ########### zsh ###########
 
+export HISTFILE=${HOME}/.zsh_history
+setopt hist_ignore_dups
+setopt EXTENDED_HISTORY
 export HISTSIZE=1000000
 export SAVEHIST=10000000
 
@@ -44,6 +48,21 @@ fi
 
 # Customize to your needs...
 fpath=(/usr/local/share/zsh-completions $fpath)
+
+
+
+########### ssh ###########
+
+
+function ssh_config() {
+  echo -e "\033]50;SetProfile=ssh\a"
+  ssh $@
+  echo -e "\033]50;SetProfile=Default\a"
+}
+
+alias ssh='ssh_config'
+compdef _ssh ssh_color=ssh
+
 
 
 
@@ -248,7 +267,7 @@ function kube-pkill-forward {
 
 function kube-delete-anything {
 	local RESOURCES=`get-kube-resources`
-	local -a TARGETS=(`kubectl get ${RESOURCES} | sed -e 1d | fzf-settings-multi | awk '{print $1}'`) 
+	local -a TARGETS=(`kubectl get ${RESOURCES} | sed -e 1d | fzf -m | awk '{print $1}'`) 
 
 	for TARGET in ${TARGETS}; do
 		kubectl delete ${RESOURCES} ${TARGET}
@@ -338,9 +357,22 @@ bindkey '≈' exec-compiled-binary
 
 
 
+########### anyenv ###########
+eval "$(anyenv init -)"
 
 
 
+
+
+
+
+
+########### completion ###########
+
+autoload -Uz compinit
+
+source <(k completion zsh)
+complete -F __start_kubectl k
 
 
 

@@ -1,4 +1,3 @@
-
 " general settings
 noremap <ESC><ESC> :q<CR>
 set clipboard+=unnamed
@@ -7,8 +6,7 @@ set backspace=indent,eol,start
 set encoding=utf-8
 scriptencoding utf-8
 set fileencoding=utf-8
-
-set laststatus=2
+let $LC_ALL = 'en'
 
 " cursor
 set cursorline
@@ -43,6 +41,9 @@ if dein#load_state('~/.cache/dein')
   call dein#add('preservim/nerdtree')
   call dein#add('Yggdroot/indentLine')
   call dein#add('itchyny/lightline.vim')
+  call dein#add('ctrlpvim/ctrlp.vim')
+  call dein#add('tpope/vim-fugitive')
+  " call dein#add('itchyny/vim-gitbranch')
 
   if has('lua')
     call dein#add('Shougo/neocomplete.vim')
@@ -72,7 +73,41 @@ let g:indentLine_char_list = ['|', '¦']
 noremap <C-o> :IndentLinesToggle<CR>
 
 
+" statusline
+set laststatus=2
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'readonly', 'gitbranch', 'absolutepath', 'command' ] ],
+      \   'right': [ [ 'lineinfo' ],
+      \              [ 'percent' ],
+      \              [ 'fileformat', 'fileencoding', 'filetype', 'charvaluehex' ] ]
+      \ },
+      \ 'component': {
+      \   'charvaluehex': '0x%B'
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'GitBranch',
+      \   'command': 'LatestExecCommand'
+      \ },
+      \ }
 
+function! LatestExecCommand()
+  let s:result = system("tail -n1 ~/.zsh_history | cut -f 2 -d\\;")[:-2]
+  if s:result == v:null
+    return "(empty)"
+  endif
+  return "Executed: ".s:result
+endfunction
+
+function! GitBranch()
+  let s:result = fugitive#head()
+  if empty(s:result)
+    return ""
+  endif
+  return "Git(".s:result.")"
+endfunction
 
 " NeoComplcache, NeoSnippet
 
@@ -89,18 +124,24 @@ imap <expr><TAB> pumvisible() ? "<C-n>" : neosnippet#jumpable() ? "<Plug>(neosni
 """ let g:neosnippet#snippets_directory = '$HOME/.vim/snippets/'
 
 
+" visual selection color
+highlight Visual term=reverse cterm=bold ctermbg=240 ctermfg=None
+highlight Comment ctermfg=244 cterm=bold
+
 " map
 
 "" plugins
 noremap ,l :NERDTreeToggle<CR>
+nnoremap <silent> sub :Unite buffer<CR>
+nnoremap <silent> suf :Unite file<CR>
 
 "" split
 noremap <C-s> :split<CR>
 noremap <C-n> :vsplit<CR>
-nnoremap sj <C-w>j
-nnoremap sk <C-w>k
-nnoremap sl <C-w>l
-nnoremap sh <C-w>h
+nnoremap <silent> sj <C-w>j<CR>
+nnoremap <silent> sk <C-w>k<CR>
+nnoremap <silent> sl <C-w>l<CR>
+nnoremap <silent> sh <C-w>h<CR>
 
 " terminal
 noremap <C-w>t :bo term ++rows=18<CR>
